@@ -1,46 +1,71 @@
-# Getting Started with Create React App
+# Front-end Web Developer Take Home Test
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 題目描述
 
-## Available Scripts
+請實作一個網頁滿足以下要求:
 
-In the project directory, you can run:
+- 偵測文字輸入框的變動，並查詢相關的 GitHub repos(參考 GitHub API)
+- 請留意搜尋 API 有 rate limit，所以必須避免過於頻繁的 API requests
+- 請實作 infinite scroll，在使用者滾到頁面底部時自動載入更多 repos，此功能不得使用任何現成的 library
 
-### `npm start`
+你不需要實作:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- GitHub 的 OAuth 登入
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Development
 
-### `npm test`
+```
+npm i
+npm run start
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Deployment to Github Page
 
-### `npm run build`
+```
+npm run build
+npm run deploy
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 架構設計說明
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+#### `components/RepoSearch`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+網頁主要程式碼，包含標題、文字輸入框、搜尋結果、提示文字
 
-### `npm run eject`
+#### `services/RepositorySearch`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```typescript
+class RepositorySearch {
+  // 用關鍵字搜尋 GitHub Repositories，回傳 repository array
+  async search(query: string): Repositories
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+  // 回傳下一頁的搜尋結果
+  async nextPage(): Repositories
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+  // 取得需等待幾秒，ratelimit 才會重置
+  getRetryAfter(): number
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+  // 發送 request，並且紀錄 ratelimit-remaining, ratelimit-reset 與分頁連結。每次呼叫前，會檢查 ratelimit 是否足夠
+  private async request(url: string): Repositories
+}
+```
 
-## Learn More
+#### `hooks/useDebouncedValue`
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+用來等待使用者輸入完成後，再更新搜尋關鍵字。
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```typescript
+function useDebouncedValue<T>(value: T, delay: number = 500): T
+```
+
+#### `hooks/useInfiniteScroll`
+
+使用 IntersectionObserver API 來觀察是否滾動到網頁底部，當到滾動到網頁底部時，執行 callback function。
+
+```typescript
+function useInfiniteScroll(
+  cb: CallbackFunction,
+  targetRef: React.RefObject<HTMLDivElement>,
+  rootRef: React.RefObject<HTMLDivElement>,
+): void
+```
