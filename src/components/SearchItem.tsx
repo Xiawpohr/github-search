@@ -22,16 +22,23 @@ export default function SearchItem(props: SearchItemProps) {
 
   return (
     <StyledCard width={1} p={3}>
-      <Link href={url} target='_blank' rel='noopenner noreferrer'>
-        <Heading fontSize={3}>{name}</Heading>
+      <Link
+        href={url}
+        target='_blank'
+        rel='noopenner noreferrer'
+        style={{ display: 'inline-block' }}
+      >
+        <Heading fontSize={3} width={1}>
+          {name}
+        </Heading>
       </Link>
       <Text mt={2}>{description}</Text>
       <Flex mt={3}>
-        <Flex width={1}>
+        <Flex width={1} alignItems='center'>
           <Star size='24' />
           <Text ml={1}>{stargazers}</Text>
         </Flex>
-        <Flex width={1}>
+        <Flex width={1} alignItems='center'>
           <Eye size='24' />
           <Text ml={1}>{watchers}</Text>
         </Flex>

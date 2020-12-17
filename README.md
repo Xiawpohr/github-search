@@ -21,6 +21,8 @@ npm run start
 
 ## Deployment to Github Page
 
+[Demo website](https://xiawpohr.github.io/github-search/)
+
 ```
 npm run build
 npm run deploy
@@ -28,11 +30,11 @@ npm run deploy
 
 ## 架構設計說明
 
-#### `components/RepoSearch`
+### `components/RepoSearch`
 
 網頁主要程式碼，包含標題、文字輸入框、搜尋結果、提示文字
 
-#### `services/RepositorySearch`
+### `services/RepositorySearch`
 
 ```typescript
 class RepositorySearch {
@@ -50,7 +52,7 @@ class RepositorySearch {
 }
 ```
 
-#### `hooks/useDebouncedValue`
+### `hooks/useDebouncedValue`
 
 用來等待使用者輸入完成後，再更新搜尋關鍵字。
 
@@ -58,9 +60,9 @@ class RepositorySearch {
 function useDebouncedValue<T>(value: T, delay: number = 500): T
 ```
 
-#### `hooks/useInfiniteScroll`
+### `hooks/useInfiniteScroll`
 
-使用 IntersectionObserver API 來觀察是否滾動到網頁底部，當到滾動到網頁底部時，執行 callback function。
+使用 Intersection Observer API 來觀察是否滾動到網頁底部，當到滾動到網頁底部時，執行 callback function。
 
 ```typescript
 function useInfiniteScroll(
